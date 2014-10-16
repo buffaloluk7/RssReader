@@ -4,5 +4,6 @@
     <string name="app_name">RssReader</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_new">New</string>
+    <string name="rssfeed_empty">Noch kein RSS Feed vorhanden. Klicke auf das + Symbol um einen neuen hinzuzufügen.</string>
 
 </resources>

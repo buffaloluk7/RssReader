@@ -42,7 +42,7 @@ public class RssItemListFragment extends ListFragment {
         rssItem.setTitle("test-titel");
         rssItem.setLink("http://test.com");
 
-        List<RssItem> rssItems = new ArrayList<RssItem>(3);
+        List<RssItem> rssItems = new ArrayList<RssItem>(1);
         rssItems.add(rssItem);
 
         setListAdapter(new ArrayAdapter<RssItem>(getActivity(),

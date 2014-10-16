@@ -33,7 +33,7 @@ public class MainActivity extends Activity {
             int rssFeedId = intent.getIntExtra("rssfeed-id", 0);
 
             getFragmentManager().beginTransaction()
-                    .replace(R.id.container, RssItemListFragment.newInstance(1))
+                    .replace(R.id.container, RssItemListFragment.newInstance(rssFeedId))
                     .commit();
         }
     };

@@ -8,10 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import cc.lukas.rssreader.dummy.RssFeeds;
 import cc.lukas.rssreader.parser.RssFeed;
@@ -45,9 +47,14 @@ public class RssFeedListFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        List<String> rssTitles = new ArrayList<String>();
+        for (RssFeed feed : RssFeeds.FEEDS) {
+            rssTitles.add(feed.getTitle());
+        }
+
         // TODO: Change Adapter to display your content
-        mAdapter = new ArrayAdapter<RssFeed>(getActivity(),
-                android.R.layout.simple_list_item_1, android.R.id.text1, RssFeeds.FEEDS);
+        mAdapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_list_item_1, android.R.id.text1, rssTitles);
     }
 
     @Override
@@ -57,10 +64,7 @@ public class RssFeedListFragment extends ListFragment {
 
         // Set the adapter
         mListView = (AbsListView) view.findViewById(android.R.id.list);
-        ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
-
-        // Set OnItemClickListener so we can be notified on item clicks
-        //mListView.setOnItemClickListener(this);
+        mListView.setAdapter(mAdapter);
 
         return view;
     }
@@ -71,7 +75,7 @@ public class RssFeedListFragment extends ListFragment {
 
         Intent intent = new Intent("rssfeed-opened");
         //intent.putExtra(ARG_FEED_ID, RssFeeds.FEEDS.get(position).id);
-        LocalBroadcastManager.getInstance(null).sendBroadcast(intent);
+        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
     }
 
 }
