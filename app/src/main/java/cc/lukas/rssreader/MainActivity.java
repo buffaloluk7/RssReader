@@ -1,11 +1,16 @@
 package cc.lukas.rssreader;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends Activity implements RssFeedFragment.OnFragmentInteractionListener {
+public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -14,10 +19,24 @@ public class MainActivity extends Activity implements RssFeedFragment.OnFragment
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, new RssFeedFragment())
+                    .add(R.id.container, new RssFeedListFragment())
                     .commit();
         }
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(rssFeedReceiver,
+                new IntentFilter("rssfeed-opened"));
     }
+
+    private BroadcastReceiver rssFeedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int rssFeedId = intent.getIntExtra("rssfeed-id", 0);
+
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.container, RssItemListFragment.newInstance(1))
+                    .commit();
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -32,14 +51,9 @@ public class MainActivity extends Activity implements RssFeedFragment.OnFragment
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_search) {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onFragmentInteraction(String id) {
-
     }
 }
