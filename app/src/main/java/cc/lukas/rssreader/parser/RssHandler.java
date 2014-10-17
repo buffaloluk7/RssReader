@@ -6,6 +6,9 @@ import org.xml.sax.helpers.DefaultHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import cc.lukas.rssreader.RssFeed;
+import cc.lukas.rssreader.RssItem;
+
 /**
  * Created by Lukas on 28.09.2014.
  */
@@ -26,8 +29,8 @@ public class RssHandler extends DefaultHandler {
 
         if (qName.equals("item") && rssFeed != null) {
             rssItem = new RssItem();
-            rssItem.setFeed(rssFeed);
-            rssFeed.addRssItem(rssItem);
+            rssItem.setFeedId(rssFeed.getId());
+
         }
     }
 
