@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
@@ -64,6 +65,13 @@ public class RssFeedListFragment extends ListFragment {
         // Set the adapter
         AbsListView mListView = (AbsListView) view.findViewById(android.R.id.list);
         mListView.setAdapter(adapter);
+        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                // react on long click
+                return true;
+            }
+        });
 
         return view;
     }

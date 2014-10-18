@@ -25,6 +25,8 @@ public class RssFeedDaoGenerator {
         rssItem.addStringProperty("link").notNull();
         rssItem.addStringProperty("description");
         rssItem.addDateProperty("pubDate");
+        rssItem.addBooleanProperty("read");
+        rssItem.addBooleanProperty("starred");
         Property feedId = rssItem.addLongProperty("feedId").notNull().getProperty();
 
         // Item belongs to ONE feed
