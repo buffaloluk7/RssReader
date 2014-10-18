@@ -5,7 +5,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -29,6 +33,44 @@ public class RssFeedListFragment extends ListFragment {
      * Views.
      */
     private SimpleCursorAdapter adapter;
+    private ActionMode actionMode;
+    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+
+        // Called when the action mode is created; startActionMode() was called
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            // Inflate a menu resource providing context menu items
+            MenuInflater inflater = actionMode.getMenuInflater();
+            inflater.inflate(R.menu.rssfeed_actionmode, menu);
+            return true;
+        }
+
+        // Called each time the action mode is shown. Always called after onCreateActionMode, but
+        // may be called multiple times if the mode is invalidated.
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false; // Return false if nothing is done
+        }
+
+        // Called when the user selects a contextual menu item
+        @Override
+        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            switch (menuItem.getItemId()) {
+                case R.id.action_delete:
+                    //deleteCurrentItem();
+                    actionMode.finish(); // Action picked, so close the CAB
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        // Called when the user exits the action mode
+        @Override
+        public void onDestroyActionMode(ActionMode actionMode) {
+            //actionMode = null;
+        }
+    };
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -68,6 +110,12 @@ public class RssFeedListFragment extends ListFragment {
         mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (actionMode != null) {
+                    return false;
+                }
+
+                actionMode = getActivity().startActionMode(mActionModeCallback);
+                view.setSelected(true);
                 // react on long click
                 return true;
             }
