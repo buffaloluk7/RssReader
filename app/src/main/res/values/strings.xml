@@ -5,7 +5,9 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_new">New</string>
     <string name="rssfeed_empty">Noch kein RSS Feed vorhanden. Klicke auf das + Symbol um einen neuen hinzuzufügen.</string>
-    <string name="hello_blank_fragment">Neuen RSS Feed hinzufügen</string>
-    <string name="action_addrssfeed">RSS Feed hinzufügen</string>
+    <string name="title_addfeed">Neuen Feed hinzufügen</string>
+    <string name="title">Titel</string>
+    <string name="link">Link</string>
+    <string name="btn_addfeed">Feed hinzufügen</string>
 
 </resources>

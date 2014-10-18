@@ -1,9 +1,12 @@
 <component name="ProjectDictionaryState">
   <dictionary name="Lukas">
     <words>
+      <w>addfeed</w>
       <w>debatten</w>
       <w>greendaogenerator</w>
       <w>rssfeed</w>
+      <w>rssitem</w>
+      <w>rssitemcontentprovider</w>
       <w>rssreader</w>
     </words>
   </dictionary>

@@ -1,15 +1,18 @@
-package cc.lukas.rssreader;
+package cc.lukas.rssreader.fragments;
 
 import android.app.ListFragment;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.ListAdapter;
 import android.widget.SimpleCursorAdapter;
+
+import cc.lukas.rssreader.R;
+import cc.lukas.rssreader.RssFeedDao;
+import cc.lukas.rssreader.RssItemContentProvider;
+import cc.lukas.rssreader.RssItemDao;
 
 /**
  * A fragment representing a list of Items.
@@ -23,11 +26,6 @@ public class RssItemListFragment extends ListFragment {
      * Views.
      */
     private SimpleCursorAdapter adapter;
-    private SQLiteDatabase db;
-    private DaoMaster daoMaster;
-    private DaoSession daoSession;
-    private RssItemDao rssItemDao;
-    private Cursor cursor;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -49,25 +47,18 @@ public class RssItemListFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Establish database connection
-        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(getActivity(), "rssreader-db", null);
-        db = helper.getWritableDatabase();
-        daoMaster = new DaoMaster(db);
-        daoSession = daoMaster.newSession();
-        rssItemDao = daoSession.getRssItemDao();
-
         // Get feed id from arguments
         long feedId = getArguments().getLong(ARG_FEED_ID);
 
-        // Fetch rss feeds
-        cursor = daoSession.getDatabase().query(rssItemDao.getTablename(),
-                new String[]{RssItemDao.Properties.Id.columnName,
-                        RssItemDao.Properties.Title.columnName},
-                RssItemDao.Properties.FeedId.columnName + " = ?",
-                new String[]{String.valueOf(feedId)},
-                null,
-                null,
-                null);
+        // Fetch rss feed items
+        Cursor cursor = getActivity()
+                .getContentResolver()
+                .query(RssItemContentProvider.CONTENT_URI,
+                        new String[]{RssItemDao.Properties.Id.columnName,
+                                RssItemDao.Properties.Title.columnName},
+                        RssItemDao.Properties.FeedId.columnName + " = ?",
+                        new String[]{String.valueOf(feedId)},
+                        null);
         // Set up cursor adapter
         adapter = new SimpleCursorAdapter(getActivity(),
                 android.R.layout.simple_list_item_1,

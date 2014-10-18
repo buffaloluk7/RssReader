@@ -16,12 +16,14 @@ public class RssFeedDaoGenerator {
         rssFeed.addStringProperty("title").notNull();
         rssFeed.addStringProperty("link").notNull();
         rssFeed.addDateProperty("updatedAt");
+        rssFeed.addContentProvider();
 
         Entity rssItem = this.schema.addEntity("RssItem");
         rssItem.addIdProperty().autoincrement();
         rssItem.addStringProperty("title").notNull();
         rssItem.addStringProperty("link").notNull();
         rssItem.addStringProperty("description");
+        rssItem.addContentProvider();
         Property pubDate = rssItem.addDateProperty("pubDate").notNull().getProperty();
         Property feedId = rssItem.addLongProperty("feedId").notNull().getProperty();
 
@@ -35,7 +37,8 @@ public class RssFeedDaoGenerator {
 
         try {
             new DaoGenerator().generateAll(schema, outputDirectory);
-        } catch (Throwable ignored) { }
+        } catch (Throwable ignored) {
+        }
     }
 
     public static void main(String args[]) throws Exception {
