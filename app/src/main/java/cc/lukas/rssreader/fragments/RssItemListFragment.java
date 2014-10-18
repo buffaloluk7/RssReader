@@ -18,8 +18,7 @@ import cc.lukas.rssreader.RssItemDao;
  * A fragment representing a list of Items.
  */
 public class RssItemListFragment extends ListFragment {
-
-    private static final String ARG_FEED_ID = "feedId";
+    private static final String ARG_FEED_ID = "FEED_ID";
 
     /**
      * The Adapter which will be used to populate the ListView/GridView with
@@ -79,5 +78,4 @@ public class RssItemListFragment extends ListFragment {
 
         return view;
     }
-
 }

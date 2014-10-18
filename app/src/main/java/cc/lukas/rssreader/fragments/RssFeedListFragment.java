@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
@@ -20,8 +19,7 @@ import cc.lukas.rssreader.RssFeedDao;
 /**
  * A fragment representing a list of Items.
  */
-public class RssFeedListFragment extends ListFragment implements AdapterView.OnItemLongClickListener {
-
+public class RssFeedListFragment extends ListFragment {
     public static final String ARG_FEED_ID = "FEED_ID";
     public static final String INTENT_RSSFEED = "RSSFEED";
 
@@ -78,10 +76,5 @@ public class RssFeedListFragment extends ListFragment implements AdapterView.OnI
         intent.putExtra(ARG_FEED_ID, id);
 
         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
-    }
-
-    @Override
-    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-        return false;
     }
 }
