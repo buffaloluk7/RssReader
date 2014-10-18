@@ -44,6 +44,23 @@ public class MainActivity extends Activity {
     };
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Register local broadcast receiver
+        LocalBroadcastManager.getInstance(this).registerReceiver(rssFeedReceiver,
+                new IntentFilter(RssFeedListFragment.INTENT_RSSFEED));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Unregister local broadcast receiver
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(rssFeedReceiver);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -74,9 +91,6 @@ public class MainActivity extends Activity {
             // Load RssFeed list fragment
             loadRssFeedListFragment(false);
         }
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(rssFeedReceiver,
-                new IntentFilter(RssFeedListFragment.INTENT_RSSFEED));
     }
 
     @Override

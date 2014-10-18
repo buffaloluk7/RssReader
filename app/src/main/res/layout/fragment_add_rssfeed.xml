@@ -28,11 +28,12 @@
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <EditText
-        android:id="@+id/editText1"
-        android:layout_width="wrap_content"
+        android:id="@+id/editText_rssfeed_title"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView2"
-        android:ems="@android:integer/config_shortAnimTime">
+        android:hint="@string/hint_optional"
+        android:inputType="text">
 
         <requestFocus />
     </EditText>
@@ -41,26 +42,26 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/editText1"
+        android:layout_below="@+id/editText_rssfeed_title"
         android:layout_marginTop="30dp"
         android:text="@string/link"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <EditText
-        android:id="@+id/editText2"
-        android:layout_width="wrap_content"
+        android:id="@+id/editText_rssfeed_link"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView3"
-        android:ems="@android:integer/config_longAnimTime" />
+        android:hint="@string/hint_link"
+        android:inputType="textUri"
+        android:text="http://rss.orf.at/news.xml" />
 
     <Button
         android:id="@+id/button_addfeed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/editText2"
+        android:layout_below="@+id/editText_rssfeed_link"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
         android:text="@string/btn_addfeed" />
-
-
 </RelativeLayout>

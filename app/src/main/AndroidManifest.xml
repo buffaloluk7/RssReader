@@ -19,7 +19,7 @@
         </activity>
 
         <service
-            android:name=".services.RssFeedDownloadService"
+            android:name=".services.RssFeedService"
             android:exported="false"></service>
 
         <provider

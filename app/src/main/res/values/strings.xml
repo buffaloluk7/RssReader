@@ -9,5 +9,7 @@
     <string name="title">Titel</string>
     <string name="link">Link</string>
     <string name="btn_addfeed">Feed hinzufügen</string>
+    <string name="hint_optional">(optional)</string>
+    <string name="hint_link">(e.g. http://rss.orf.at/news.xml)</string>
 
 </resources>
