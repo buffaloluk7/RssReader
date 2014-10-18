@@ -11,8 +11,7 @@
         android:layout_height="match_parent"
         android:longClickable="true"
         android:choiceMode="singleChoice"
-        android:listSelector="@android:color/holo_blue_light"
-        />
+        android:listSelector="@android:color/holo_blue_light" />
 
     <TextView
         android:id="@android:id/empty"

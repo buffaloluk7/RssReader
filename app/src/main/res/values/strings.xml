@@ -15,4 +15,5 @@
     <string name="action_delete">Delete</string>
     <string name="action_read">gelesen</string>
     <string name="action_unread">ungelesen</string>
+    <string name="rssitem_empty">Dieser Feed hat keine Einträge.</string>
 </resources>

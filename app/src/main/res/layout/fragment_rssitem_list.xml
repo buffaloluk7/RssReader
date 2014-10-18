@@ -3,19 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="cc.lukas.rssreader.fragments.RssFeedListFragment">
+    tools:context="cc.lukas.rssreader.fragments.RssItemListFragment">
 
-    <GridView
+    <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:numColumns="2" />
+        android:longClickable="true"
+        android:choiceMode="singleChoice"
+        android:listSelector="@android:color/holo_blue_light" />
 
     <TextView
         android:id="@android:id/empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="@string/rssfeed_empty" />
-
+        android:text="@string/rssitem_empty" />
 </FrameLayout>
