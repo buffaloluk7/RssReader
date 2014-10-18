@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.util.Log;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -105,8 +106,9 @@ public class RssFeedListFragment extends ListFragment {
         View view = inflater.inflate(R.layout.fragment_rssfeed, container, false);
 
         // Set the adapter
-        AbsListView mListView = (AbsListView) view.findViewById(android.R.id.list);
+        final AbsListView mListView = (AbsListView) view.findViewById(android.R.id.list);
         mListView.setAdapter(adapter);
+        mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -115,7 +117,10 @@ public class RssFeedListFragment extends ListFragment {
                 }
 
                 actionMode = getActivity().startActionMode(mActionModeCallback);
+
                 view.setSelected(true);
+                view.setActivated(true);
+
                 // react on long click
                 return true;
             }
@@ -127,10 +132,10 @@ public class RssFeedListFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-
         Intent intent = new Intent(INTENT_RSSFEED);
         intent.putExtra(ARG_FEED_ID, id);
 
         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+        Log.i("RssFeedList", "Option " + position + " selected from FeedList");
     }
 }
