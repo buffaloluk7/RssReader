@@ -67,20 +67,20 @@ public class RssFeedListFragment extends ListFragment {
         View view = inflater.inflate(R.layout.fragment_rssfeed_list, container, false);
 
         // Set the adapter
-        final AbsListView mListView = (AbsListView) view.findViewById(android.R.id.list);
-        mListView.setAdapter(adapter);
-        mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        mListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+        final AbsListView listView = (AbsListView) view.findViewById(android.R.id.list);
+        listView.setAdapter(adapter);
+        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
             public void onItemCheckedStateChanged(ActionMode actionMode, int position, long id, boolean checked) {
                 // Update the action mode title
-                actionMode.setTitle(mListView.getCheckedItemCount() + " Feeds selektiert");
+                actionMode.setTitle(listView.getCheckedItemCount() + " Feeds selektiert");
 
                 // Set background color on selected item.
-                if (mListView.isItemChecked(position)) {
-                    mListView.getChildAt(position).setBackgroundColor(Color.BLUE);
+                if (listView.isItemChecked(position)) {
+                    listView.getChildAt(position).setBackgroundColor(Color.BLUE);
                 } else {
-                    mListView.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
+                    listView.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
                 }
             }
 
@@ -100,13 +100,14 @@ public class RssFeedListFragment extends ListFragment {
                 switch (menuItem.getItemId()) {
                     case R.id.action_delete:
                         // Get a list of selected item ids.
-                        long[] selectedFeedIds = mListView.getCheckedItemIds();
+                        long[] selectedFeedIds = listView.getCheckedItemIds();
                         ContentResolver cr = getActivity().getContentResolver();
 
                         // Delete all selected items.
                         for (long selectedFeedId : selectedFeedIds) {
+                            // Execute delete statement.
                             cr.delete(RssFeedContentProvider.CONTENT_URI,
-                                    RssFeedDao.Properties.Id.columnName + " =  ?",
+                                    RssFeedDao.Properties.Id.columnName + " = ?",
                                     new String[]{String.valueOf(selectedFeedId)});
                             // TODO: use observer to remove deleted items.
                         }
@@ -120,8 +121,8 @@ public class RssFeedListFragment extends ListFragment {
 
             @Override
             public void onDestroyActionMode(ActionMode actionMode) {
-                mListView.clearChoices();
-                mListView.requestLayout();
+                listView.clearChoices();
+                listView.requestLayout();
             }
         });
 

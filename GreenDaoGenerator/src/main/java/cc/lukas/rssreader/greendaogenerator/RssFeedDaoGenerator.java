@@ -7,7 +7,7 @@ import de.greenrobot.daogenerator.Schema;
 import de.greenrobot.daogenerator.ToMany;
 
 public class RssFeedDaoGenerator {
-    private static final int SCHEMA_VERSION = 1;
+    private static final int SCHEMA_VERSION = 2;
     private Schema schema = new Schema(SCHEMA_VERSION, "cc.lukas.rssreader");
 
     private void generateRssFeedSchema(String outputDirectory) {

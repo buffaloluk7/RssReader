@@ -1,21 +1,22 @@
 package cc.lukas.rssreader.fragments;
 
 import android.app.ListFragment;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 import cc.lukas.rssreader.R;
-import cc.lukas.rssreader.RssFeedDao;
 import cc.lukas.rssreader.RssItemContentProvider;
 import cc.lukas.rssreader.RssItemDao;
 
@@ -24,7 +25,6 @@ import cc.lukas.rssreader.RssItemDao;
  */
 public class RssItemListFragment extends ListFragment {
     private static final String ARG_FEED_ID = "FEED_ID";
-
 
     /**
      * The Adapter which will be used to populate the ListView/GridView with
@@ -36,53 +36,6 @@ public class RssItemListFragment extends ListFragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    private ActionMode actionMode;
-    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
-
-        // Called when the action mode is created; startActionMode() was called
-        @Override
-        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-            // Inflate a menu resource providing context menu items
-            MenuInflater inflater = actionMode.getMenuInflater();
-            inflater.inflate(R.menu.rssitem_actionmode, menu);
-            return true;
-        }
-
-        // Called each time the action mode is shown. Always called after onCreateActionMode, but
-        // may be called multiple times if the mode is invalidated.
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false; // Return false if nothing is done
-        }
-
-        // Called when the user selects a contextual menu item
-        @Override
-        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-            switch (menuItem.getItemId()) {
-                case R.id.action_fav:
-                    //deleteCurrentItem();
-                    actionMode.finish(); // Action picked, so close the CAB
-                    return true;
-                case R.id.action_read:
-                    //deleteCurrentItem();
-                    actionMode.finish(); // Action picked, so close the CAB
-                    return true;
-                case R.id.action_unread:
-                    //deleteCurrentItem();
-                    actionMode.finish(); // Action picked, so close the CAB
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        // Called when the user exits the action mode
-        @Override
-        public void onDestroyActionMode(ActionMode actionMode) {
-            //actionMode = null;
-        }
-    };
-
     public RssItemListFragment() {
     }
 
@@ -115,7 +68,7 @@ public class RssItemListFragment extends ListFragment {
         adapter = new SimpleCursorAdapter(getActivity(),
                 android.R.layout.simple_list_item_1,
                 cursor,
-                new String[]{RssFeedDao.Properties.Title.columnName},
+                new String[]{RssItemDao.Properties.Title.columnName},
                 new int[]{android.R.id.text1},
                 0);
     }
@@ -126,28 +79,80 @@ public class RssItemListFragment extends ListFragment {
         View view = inflater.inflate(R.layout.fragment_rssitem_list, container, false);
 
         // Set the adapter
-        AbsListView mListView = (AbsListView) view.findViewById(android.R.id.list);
-        mListView.setAdapter(adapter);
-
-        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        final AbsListView listView = (AbsListView) view.findViewById(android.R.id.list);
+        listView.setAdapter(adapter);
+        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (actionMode != null) {
-                    return false;
+            public void onItemCheckedStateChanged(ActionMode actionMode, int position, long id, boolean checked) {
+                // Update the action mode title
+                actionMode.setTitle(listView.getCheckedItemCount() + " Items selektiert");
+
+                // Set background color on selected item.
+                if (listView.isItemChecked(position)) {
+                    listView.getChildAt(position).setBackgroundColor(Color.BLUE);
+                } else {
+                    listView.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
+                }
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+                actionMode.getMenuInflater().inflate(R.menu.rssitem_actionmode, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+                // Get a list of selected item ids.
+                long[] selectedItemIds = listView.getCheckedItemIds();
+                ContentResolver cr = getActivity().getContentResolver();
+
+                switch (menuItem.getItemId()) {
+                    case R.id.action_read:
+                    case R.id.action_unread:
+                    case R.id.action_star:
+                        // Mark all selected items as read/unread/starred.
+                        for (long selectedItemId : selectedItemIds) {
+                            // Create ContentValues object to store the new field values.
+                            ContentValues newValues = new ContentValues();
+
+                            // Determine whether to update the read/unread or the starred flag.
+                            if (menuItem.getItemId() == R.id.action_star) {
+                                newValues.put(RssItemDao.Properties.Starred.columnName, true);
+                            } else {
+                                // Determine whether to set the read flag to true or false.
+                                boolean itemRead = menuItem.getItemId() == R.id.action_read;
+                                newValues.put(RssItemDao.Properties.Read.columnName, itemRead);
+                            }
+
+                            // Execute update statement.
+                            cr.update(RssItemContentProvider.CONTENT_URI,
+                                    newValues,
+                                    RssItemDao.Properties.Id.columnName + " = ?",
+                                    new String[]{String.valueOf(selectedItemId)});
+                        }
+                        break;
+                    default:
+                        return false;
                 }
 
-                actionMode = getActivity().startActionMode(mActionModeCallback);
-
-                view.setSelected(true);
-                view.setActivated(true);
-
-                // react on long click
+                actionMode.finish();
                 return true;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode actionMode) {
+                listView.clearChoices();
+                listView.requestLayout();
             }
         });
 
         return view;
     }
-
-
 }

@@ -2,18 +2,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
 
-    <item android:id="@+id/action_fav"
+    <item
+        android:id="@+id/action_star"
         android:icon="@drawable/ic_action_good"
-        android:title="@string/action_fav"
-        android:showAsAction="ifRoom" />
+        android:showAsAction="ifRoom"
+        android:title="@string/action_star" />
 
-    <item android:id="@+id/action_read"
+    <item
+        android:id="@+id/action_read"
         android:icon="@drawable/ic_action_read"
-        android:title="@string/action_read"
-        android:showAsAction="ifRoom" />
+        android:showAsAction="ifRoom"
+        android:title="@string/action_read" />
 
-    <item android:id="@+id/action_unread"
+    <item
+        android:id="@+id/action_unread"
         android:icon="@drawable/ic_action_unread"
-        android:title="@string/action_unread"
-        android:showAsAction="ifRoom" />
+        android:showAsAction="ifRoom"
+        android:title="@string/action_unread" />
 </menu>

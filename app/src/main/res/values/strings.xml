@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">RssReader</string>
     <string name="hello_world">Hello world!</string>
-    <string name="action_new">New</string>
-    <string name="rssfeed_empty">Noch kein RSS Feed vorhanden. Klicke auf das + Symbol um einen neuen hinzuzufügen.</string>
+    <string name="rssfeed_empty">Noch kein RSS Feed vorhanden. Klicke auf das + Symbol um einen Neuen hinzuzufügen.</string>
+    <string name="rssitem_empty">Dieser Feed hat keine Einträge.</string>
     <string name="title_addfeed">Neuen Feed hinzufügen</string>
     <string name="title">Titel</string>
     <string name="link">Link</string>
     <string name="btn_addfeed">Feed hinzufügen</string>
     <string name="hint_optional">(optional)</string>
     <string name="hint_link">(e.g. http://rss.orf.at/news.xml)</string>
-    <string name="action_fav">favorisieren</string>
-    <string name="action_delete">Delete</string>
-    <string name="action_read">gelesen</string>
-    <string name="action_unread">ungelesen</string>
-    <string name="rssitem_empty">Dieser Feed hat keine Einträge.</string>
+    <string name="action_new">Neuen Feed hinzufügen</string>
+    <string name="action_star">Artikel favorisieren</string>
+    <string name="action_delete">Feed löschen</string>
+    <string name="action_read">Als gelesen markieren</string>
+    <string name="action_unread">Als ungelesen markieren</string>
 </resources>
