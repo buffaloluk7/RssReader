@@ -4,13 +4,12 @@ import android.app.ListFragment;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,44 +33,6 @@ public class RssFeedListFragment extends ListFragment {
      * Views.
      */
     private SimpleCursorAdapter adapter;
-    private ActionMode actionMode;
-    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
-
-        // Called when the action mode is created; startActionMode() was called
-        @Override
-        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-            // Inflate a menu resource providing context menu items
-            MenuInflater inflater = actionMode.getMenuInflater();
-            inflater.inflate(R.menu.rssfeed_actionmode, menu);
-            return true;
-        }
-
-        // Called each time the action mode is shown. Always called after onCreateActionMode, but
-        // may be called multiple times if the mode is invalidated.
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false; // Return false if nothing is done
-        }
-
-        // Called when the user selects a contextual menu item
-        @Override
-        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-            switch (menuItem.getItemId()) {
-                case R.id.action_delete:
-                    //deleteCurrentItem();
-                    actionMode.finish(); // Action picked, so close the CAB
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        // Called when the user exits the action mode
-        @Override
-        public void onDestroyActionMode(ActionMode actionMode) {
-            //actionMode = null;
-        }
-    };
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -113,11 +74,14 @@ public class RssFeedListFragment extends ListFragment {
             @Override
             public void onItemCheckedStateChanged(ActionMode actionMode, int position, long id, boolean checked) {
                 // Update the action mode title
-                actionMode.setTitle(mListView.getCheckedItemCount() + " Selected");
+                actionMode.setTitle(mListView.getCheckedItemCount() + " Feeds selektiert");
 
                 // Set background color on selected item.
-                //mListView.getItemAtPosition(position);
-                //View x = ((View)mListView.getItemAtPosition(position)).setBackgroundColor(Color.BLUE); // NOT WORKING
+                if (mListView.isItemChecked(position)) {
+                    mListView.getChildAt(position).setBackgroundColor(Color.BLUE);
+                } else {
+                    mListView.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
+                }
             }
 
             @Override
@@ -167,10 +131,10 @@ public class RssFeedListFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
+
         Intent intent = new Intent(INTENT_RSSFEED);
         intent.putExtra(ARG_FEED_ID, id);
 
         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
-        Log.i("RssFeedList", "Option " + position + " selected from FeedList");
     }
 }
