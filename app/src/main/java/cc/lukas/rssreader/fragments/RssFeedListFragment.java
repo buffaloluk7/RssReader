@@ -1,6 +1,7 @@
 package cc.lukas.rssreader.fragments;
 
 import android.app.ListFragment;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -14,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
@@ -108,21 +108,56 @@ public class RssFeedListFragment extends ListFragment {
         // Set the adapter
         final AbsListView mListView = (AbsListView) view.findViewById(android.R.id.list);
         mListView.setAdapter(adapter);
-        mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        mListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        mListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (actionMode != null) {
-                    return false;
-                }
+            public void onItemCheckedStateChanged(ActionMode actionMode, int position, long id, boolean checked) {
+                // Update the action mode title
+                actionMode.setTitle(mListView.getCheckedItemCount() + " Selected");
 
-                actionMode = getActivity().startActionMode(mActionModeCallback);
+                // Set background color on selected item.
+                //mListView.getItemAtPosition(position);
+                //View x = ((View)mListView.getItemAtPosition(position)).setBackgroundColor(Color.BLUE); // NOT WORKING
+            }
 
-                view.setSelected(true);
-                view.setActivated(true);
-
-                // react on long click
+            @Override
+            public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+                actionMode.getMenuInflater().inflate(R.menu.rssfeed_actionmode, menu);
                 return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.action_delete:
+                        // Get a list of selected item ids.
+                        long[] selectedFeedIds = mListView.getCheckedItemIds();
+                        ContentResolver cr = getActivity().getContentResolver();
+
+                        // Delete all selected items.
+                        for (long selectedFeedId : selectedFeedIds) {
+                            cr.delete(RssFeedContentProvider.CONTENT_URI,
+                                    RssFeedDao.Properties.Id.columnName + " =  ?",
+                                    new String[]{String.valueOf(selectedFeedId)});
+                            // TODO: use observer to remove deleted items.
+                        }
+
+                        actionMode.finish();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode actionMode) {
+                mListView.clearChoices();
+                mListView.requestLayout();
             }
         });
 
