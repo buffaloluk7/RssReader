@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">RssReader</string>
-    <string name="hello_world">Hello world!</string>
     <string name="rssfeed_empty">Noch kein RSS Feed vorhanden. Klicke auf das + Symbol um einen Neuen hinzuzufügen.</string>
     <string name="rssitem_empty">Dieser Feed hat keine Einträge.</string>
     <string name="title_addfeed">Neuen Feed hinzufügen</string>
@@ -15,4 +14,13 @@
     <string name="action_delete">Feed löschen</string>
     <string name="action_read">Als gelesen markieren</string>
     <string name="action_unread">Als ungelesen markieren</string>
+    <string name="error_invalid_url">Ungültige URL</string>
+    <string name="wait">Bitte warten…</string>
+    <string name="error_invalid_xml">Ungültiges XML.</string>
+    <string name="error_internal">Es ist ein Fehler aufgetreten.</string>
+    <plurals name="feeds">
+        <item quantity="one">1 Feed</item>
+        <item quantity="other">%d Feeds</item>
+    </plurals>
+    <string name="items">%d Artikel</string>
 </resources>

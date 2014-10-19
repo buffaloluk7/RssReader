@@ -3,6 +3,7 @@
     package="cc.lukas.rssreader">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -20,15 +21,16 @@
 
         <service
             android:name=".services.RssFeedService"
-            android:exported="false"></service>
+            android:exported="false" />
 
         <provider
-            android:name="cc.lukas.rssreader.RssFeedContentProvider"
+            android:name=".RssFeedContentProvider"
             android:authorities="cc.lukas.rssreader.provider.rssfeed"
             android:exported="false" />
         <provider
-            android:name="cc.lukas.rssreader.RssItemContentProvider"
+            android:name=".RssItemContentProvider"
             android:authorities="cc.lukas.rssreader.provider.rssitem"
             android:exported="false" />
     </application>
+
 </manifest>

@@ -40,6 +40,10 @@ public class RssFeedService extends IntentService {
     public static final String EXTRA_FEED_ID = "cc.lukas.rssreader.services.extra.FEED_ID";
     public static final String EXTRA_ERROR_CODE = "cc.lukas.rssreader.services.extra.ERROR_CODE";
 
+    public static final int ERROR_INVALID_URL = 0;
+    public static final int ERROR_INVALID_XML = 1;
+    public static final int ERROR_IO = 2;
+
     public RssFeedService() {
         super("RssFeedDownloadService");
     }
@@ -68,7 +72,7 @@ public class RssFeedService extends IntentService {
         Intent intent = new Intent(context, RssFeedService.class);
         intent.setAction(ACTION_UPDATE_FEED);
         intent.putExtra(EXTRA_URL, url);
-        intent.putExtra(EXTRA_URL, url);
+        intent.putExtra(EXTRA_FEED_ID, id);
         context.startService(intent);
     }
 
@@ -77,24 +81,24 @@ public class RssFeedService extends IntentService {
         if (intent != null) {
             final String action = intent.getAction();
             final URL url;
-            final RssFeedModel rssFeedModel;
-            final Intent response = new Intent(action);
+            final Intent message = new Intent(action);
+            RssFeedModel rssFeedModel = new RssFeedModel();
 
-            // Parse URL and try downloading feed
+            // Parse URL and try downloading feed.
             try {
                 url = new URL(intent.getStringExtra(EXTRA_URL));
                 rssFeedModel = RssReader.read(url);
             } catch (MalformedURLException e) {
-                response.putExtra(EXTRA_ERROR_CODE, 0);
-                sendLocalBroadCast(response);
-                return;
+                message.putExtra(EXTRA_ERROR_CODE, ERROR_INVALID_URL);
             } catch (SAXException e) {
-                response.putExtra(EXTRA_ERROR_CODE, 1);
-                sendLocalBroadCast(response);
-                return;
+                message.putExtra(EXTRA_ERROR_CODE, ERROR_INVALID_XML);
             } catch (IOException e) {
-                response.putExtra(EXTRA_ERROR_CODE, 2);
-                sendLocalBroadCast(response);
+                message.putExtra(EXTRA_ERROR_CODE, ERROR_IO);
+            }
+
+            // Determine if an error occurred while downloading the feed.
+            if (message.hasExtra(EXTRA_ERROR_CODE)) {
+                sendLocalBroadCast(message);
                 return;
             }
 
@@ -105,8 +109,8 @@ public class RssFeedService extends IntentService {
                 createRssItemEntries(feedId, rssFeedModel.getRssItems());
 
                 // Send local broadcast containing the new feed id.
-                response.putExtra(EXTRA_FEED_ID, feedId);
-                sendLocalBroadCast(response);
+                message.putExtra(EXTRA_FEED_ID, feedId);
+                sendLocalBroadCast(message);
             } else if (ACTION_UPDATE_FEED.equals(action)) {
                 long feedId = intent.getLongExtra(EXTRA_FEED_ID, 0);
                 if (feedId < 1) {

@@ -10,12 +10,15 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.ContentObserver;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,27 +32,28 @@ import cc.lukas.rssreader.RssItemDao;
 import cc.lukas.rssreader.fragments.AddRssFeedFragment;
 import cc.lukas.rssreader.fragments.RssFeedListFragment;
 import cc.lukas.rssreader.fragments.RssItemListFragment;
+import cc.lukas.rssreader.services.RssFeedService;
 
 public class MainActivity extends Activity {
-    private BroadcastReceiver rssFeedReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            long rssFeedId = intent.getLongExtra(RssFeedListFragment.ARG_FEED_ID, 0);
-            if (rssFeedId < 1) {
-                return;
-            }
-
-            loadRssItemListFragment(rssFeedId);
-        }
-    };
+    private ContentObserver contentObserver = new RssFeedContentObserver(new Handler());
+    private BroadcastReceiver rssFeedReceiver = new RssFeedBroadcastReceiver();
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        // Register local broadcast receiver
-        LocalBroadcastManager.getInstance(this).registerReceiver(rssFeedReceiver,
-                new IntentFilter(RssFeedListFragment.INTENT_RSSFEED));
+        // Register local broadcast receiver with all its intent actions.
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(RssFeedListFragment.ACTION_OPEN_FEED);
+        intentFilter.addAction(RssFeedService.ACTION_CREATE_FEED);
+        intentFilter.addAction(RssFeedService.ACTION_UPDATE_FEED);
+        LocalBroadcastManager.getInstance(this).registerReceiver(rssFeedReceiver, intentFilter);
+
+        // Register content observers
+        getContentResolver().registerContentObserver(
+                RssFeedContentProvider.CONTENT_URI,
+                false,
+                contentObserver);
     }
 
     @Override
@@ -58,6 +62,9 @@ public class MainActivity extends Activity {
 
         // Unregister local broadcast receiver
         LocalBroadcastManager.getInstance(this).unregisterReceiver(rssFeedReceiver);
+
+        // Unregister content observers
+        getContentResolver().unregisterContentObserver(contentObserver);
     }
 
     @Override
@@ -222,5 +229,58 @@ public class MainActivity extends Activity {
         // Insert all items at once
         cr.bulkInsert(RssItemContentProvider.CONTENT_URI,
                 new ContentValues[]{item1, item2, item3, item4, item5, item6});
+    }
+
+    private class RssFeedContentObserver extends ContentObserver {
+        public RssFeedContentObserver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            this.onChange(selfChange, null);
+        }
+
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            loadRssFeedListFragment(true);
+        }
+    }
+
+    private class RssFeedBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            // ACTION equals OPEN_FEED, load fragment containing feed items.
+            if (RssFeedListFragment.ACTION_OPEN_FEED.equals(action)) {
+                long rssFeedId = intent.getLongExtra(RssFeedListFragment.EXTRA_FEED_ID, 0);
+                if (rssFeedId < 1) {
+                    return;
+                }
+
+                loadRssItemListFragment(rssFeedId);
+            } else {
+                if (intent.hasExtra(RssFeedService.EXTRA_ERROR_CODE)) {
+                    switch (intent.getIntExtra(RssFeedService.EXTRA_ERROR_CODE, -1)) {
+                        case 0:
+                            Toast.makeText(getApplicationContext(), getString(R.string.error_invalid_url), Toast.LENGTH_SHORT).show();
+                            break;
+                        case 1:
+                            Toast.makeText(getApplicationContext(), getString(R.string.error_invalid_xml), Toast.LENGTH_SHORT).show();
+                            break;
+                        default:
+                            Toast.makeText(getApplicationContext(), getString(R.string.error_internal), Toast.LENGTH_SHORT).show();
+                            break;
+                    }
+                    findViewById(R.id.button_addfeed).setEnabled(true);
+                    return;
+                }
+
+                // Open the newly created feed.
+                long feedId = intent.getLongExtra(RssFeedService.EXTRA_FEED_ID, 0);
+                loadRssItemListFragment(feedId);
+            }
+        }
     }
 }
