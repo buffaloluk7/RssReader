@@ -36,8 +36,10 @@ import cc.lukas.rssreader.fragments.RssItemListFragment;
 import cc.lukas.rssreader.services.RssFeedService;
 
 public class MainActivity extends Activity {
-    private ContentObserver contentObserver = new RssFeedContentObserver(new Handler());
+    private ContentObserver rssFeedContentObserver = new RssFeedContentObserver(new Handler());
+    private ContentObserver rssItemContentObserver = new RssItemContentObserver(new Handler());
     private BroadcastReceiver rssFeedReceiver = new RssFeedBroadcastReceiver();
+    private long lastSelectedFeedId;
 
     @Override
     protected void onResume() {
@@ -54,7 +56,11 @@ public class MainActivity extends Activity {
         getContentResolver().registerContentObserver(
                 RssFeedContentProvider.CONTENT_URI,
                 false,
-                contentObserver);
+                rssFeedContentObserver);
+        getContentResolver().registerContentObserver(
+                RssItemContentProvider.CONTENT_URI,
+                false,
+                rssItemContentObserver);
     }
 
     @Override
@@ -65,7 +71,8 @@ public class MainActivity extends Activity {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(rssFeedReceiver);
 
         // Unregister content observers
-        getContentResolver().unregisterContentObserver(contentObserver);
+        getContentResolver().unregisterContentObserver(rssFeedContentObserver);
+        getContentResolver().unregisterContentObserver(rssItemContentObserver);
     }
 
     @Override
@@ -162,6 +169,7 @@ public class MainActivity extends Activity {
                 .addToBackStack(null)
                 .commit();
         displayBackButton(true);
+        lastSelectedFeedId = rssFeedId;
     }
 
     // Load Fragment allowing the user to enter a title and rss link.
@@ -258,6 +266,17 @@ public class MainActivity extends Activity {
         @Override
         public void onChange(boolean selfChange) {
             loadRssFeedListFragment(true);
+        }
+    }
+
+    private class RssItemContentObserver extends ContentObserver {
+        public RssItemContentObserver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            loadRssItemListFragment(lastSelectedFeedId);
         }
     }
 

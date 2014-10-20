@@ -23,4 +23,6 @@
         <item quantity="other">%d Feeds</item>
     </plurals>
     <string name="items">%d Artikel</string>
+    <string name="hint_item_unread">Artikel ungelesen</string>
+    <string name="hint_item_starred">Artikel favorisiert</string>
 </resources>

@@ -3,15 +3,17 @@ package cc.lukas.rssreader.fragments;
 import android.app.ListFragment;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 
 import cc.lukas.rssreader.R;
 import cc.lukas.rssreader.RssItemContentProvider;
 import cc.lukas.rssreader.RssItemDao;
+import cc.lukas.rssreader.adapter.RssItemCursorAdapter;
 import cc.lukas.rssreader.listener.RssItemMultiChoiceModeListener;
 
 /**
@@ -23,7 +25,7 @@ public class RssItemListFragment extends ListFragment {
      * The Adapter which will be used to populate the ListView/GridView with
      * Views.
      */
-    private SimpleCursorAdapter adapter;
+    private CursorAdapter adapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -53,21 +55,18 @@ public class RssItemListFragment extends ListFragment {
                 .getContentResolver()
                 .query(RssItemContentProvider.CONTENT_URI,
                         new String[]{RssItemDao.Properties.Id.columnName,
-                                RssItemDao.Properties.Title.columnName},
+                                RssItemDao.Properties.Title.columnName,
+                                RssItemDao.Properties.Read.columnName,
+                                RssItemDao.Properties.Starred.columnName},
                         RssItemDao.Properties.FeedId.columnName + " = ?",
                         new String[]{String.valueOf(feedId)},
                         null);
-        // Set up cursor adapter.
-        adapter = new SimpleCursorAdapter(getActivity(),
-                android.R.layout.simple_list_item_1,
-                cursor,
-                new String[]{RssItemDao.Properties.Title.columnName},
-                new int[]{android.R.id.text1},
-                0);
+        // Set up the cursor adapter.
+        adapter = new RssItemCursorAdapter(getActivity(), cursor, 0);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_rssitem_list, container, false);
 

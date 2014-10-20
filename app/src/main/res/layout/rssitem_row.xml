@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:background="@drawable/border_bottom">
+
+    <!-- Item unread -->
+    <ImageView
+        android:id="@+id/item_unread"
+        android:layout_width="12dp"
+        android:layout_height="12dp"
+        android:layout_centerVertical="true"
+        android:layout_margin="8dp"
+        android:contentDescription="@string/hint_item_unread"
+        android:src="@drawable/rssitem_row_circle" />
+
+    <!-- Item title -->
+    <TextView
+        android:id="@+id/item_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="28dp"
+        android:textSize="18sp" />
+
+    <!-- Item starred -->
+    <ImageView
+        android:id="@+id/item_starred"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="8dp"
+        android:background="@android:color/holo_green_dark"
+        android:contentDescription="@string/hint_item_starred"
+        android:src="@drawable/ic_action_good" />
+</RelativeLayout>

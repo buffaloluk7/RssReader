@@ -5,6 +5,8 @@
       <w>autogenerate</w>
       <w>debatten</w>
       <w>greendaogenerator</w>
+      <w>itemcount</w>
+      <w>itemcounter</w>
       <w>rssfeed</w>
       <w>rssitem</w>
       <w>rssitemcontentprovider</w>

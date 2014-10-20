@@ -9,12 +9,13 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 
 import cc.lukas.rssreader.R;
 import cc.lukas.rssreader.RssFeedContentProvider;
 import cc.lukas.rssreader.RssFeedDao;
+import cc.lukas.rssreader.adapter.RssFeedCursorAdapter;
 import cc.lukas.rssreader.listener.RssFeedMultiChoiceModeListener;
 
 /**
@@ -28,7 +29,7 @@ public class RssFeedListFragment extends ListFragment {
      * The Adapter which will be used to populate the ListView/GridView with
      * Views.
      */
-    private SimpleCursorAdapter adapter;
+    private CursorAdapter adapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -48,13 +49,8 @@ public class RssFeedListFragment extends ListFragment {
                         new String[]{RssFeedDao.Properties.Id.columnName,
                                 RssFeedDao.Properties.Title.columnName},
                         null, null, null);
-        // Set up cursor adapter.
-        adapter = new SimpleCursorAdapter(getActivity(),
-                android.R.layout.simple_list_item_1,
-                cursor,
-                new String[]{RssFeedDao.Properties.Title.columnName},
-                new int[]{android.R.id.text1},
-                0);
+        // Set up the cursor adapter.
+        adapter = new RssFeedCursorAdapter(getActivity(), cursor, 0);
     }
 
     @Override
