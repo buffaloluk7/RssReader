@@ -49,11 +49,11 @@ public class AddRssFeedFragment extends Fragment {
                     return;
                 }
 
-                // Show toast and disable UI elements
+                // Show toast and disable UI elements.
                 Toast.makeText(getActivity(), getString(R.string.wait), Toast.LENGTH_SHORT).show();
                 button.setEnabled(false);
 
-                // Start the service using a helper method
+                // Start the service using a helper method.
                 RssFeedService.startActionCreateFeed(getActivity(), title, link);
             }
         });

@@ -4,6 +4,7 @@ import android.app.ListFragment;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,18 +58,15 @@ public class RssFeedListFragment extends ListFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_rssfeed_list, container, false);
 
-        // Set the adapter, choice mode and choice mode listener
+        // Set the adapter, choice mode and choice mode listener.
         ListView listView = (ListView) view.findViewById(android.R.id.list);
         listView.setAdapter(adapter);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        listView.setMultiChoiceModeListener(
-                new RssFeedMultiChoiceModeListener(
-                        getActivity(),
-                        listView,
-                        getResources()));
+        listView.setMultiChoiceModeListener(new RssFeedMultiChoiceModeListener(getActivity(), listView, getResources()));
 
         return view;
     }

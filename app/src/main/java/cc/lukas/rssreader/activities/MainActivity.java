@@ -2,6 +2,7 @@ package cc.lukas.rssreader.activities;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -126,6 +127,22 @@ public class MainActivity extends Activity {
         }
     }
 
+    // React on the back button being pressed.
+    @Override
+    public void onBackPressed() {
+        FragmentManager fm = getFragmentManager();
+        int numberOfFragments = fm.getBackStackEntryCount();
+
+        if (numberOfFragments > 1) {
+            fm.popBackStack();
+        } else if (numberOfFragments == 1) {
+            fm.popBackStack();
+            displayBackButton(false);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     // Load Fragment containing list of all rss feeds.
     private void loadRssFeedListFragment(boolean replace) {
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -135,30 +152,32 @@ public class MainActivity extends Activity {
             transaction.add(R.id.container, new RssFeedListFragment());
         }
         transaction.commit();
-        displayHomeAsUpEnabled(false);
+        displayBackButton(false);
     }
 
     // Load Fragment containing list of all rss items of a given feed.
     private void loadRssItemListFragment(long rssFeedId) {
         getFragmentManager().beginTransaction()
                 .replace(R.id.container, RssItemListFragment.newInstance(rssFeedId))
+                .addToBackStack(null)
                 .commit();
-        displayHomeAsUpEnabled(true);
+        displayBackButton(true);
     }
 
     // Load Fragment allowing the user to enter a title and rss link.
     private void loadAddRssFeedFragment() {
         getFragmentManager().beginTransaction()
                 .replace(R.id.container, new AddRssFeedFragment())
+                .addToBackStack(null)
                 .commit();
-        displayHomeAsUpEnabled(true);
+        displayBackButton(true);
     }
 
-    // Enable/Disable the going-back button.
-    private void displayHomeAsUpEnabled(boolean enabled) {
+    // Show/hide the back button.
+    private void displayBackButton(boolean enable) {
         ActionBar actionBar = getActionBar();
         if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(enabled);
+            actionBar.setDisplayHomeAsUpEnabled(enable);
         }
     }
 
@@ -238,11 +257,6 @@ public class MainActivity extends Activity {
 
         @Override
         public void onChange(boolean selfChange) {
-            this.onChange(selfChange, null);
-        }
-
-        @Override
-        public void onChange(boolean selfChange, Uri uri) {
             loadRssFeedListFragment(true);
         }
     }
