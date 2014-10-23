@@ -7,18 +7,21 @@ import android.graphics.Color;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
+
+import java.lang.ref.WeakReference;
 
 import cc.lukas.rssreader.R;
 import cc.lukas.rssreader.RssFeedContentProvider;
 import cc.lukas.rssreader.RssFeedDao;
 
 public class RssFeedMultiChoiceModeListener implements ListView.MultiChoiceModeListener {
-    private Activity activity;
+    private WeakReference<Activity> activity;
     private ListView listView;
     private Resources resources;
 
-    public RssFeedMultiChoiceModeListener(Activity activity, ListView listView, Resources resources) {
+    public RssFeedMultiChoiceModeListener(WeakReference<Activity> activity, ListView listView, Resources resources) {
         this.activity = activity;
         this.listView = listView;
         this.resources = resources;
@@ -34,10 +37,12 @@ public class RssFeedMultiChoiceModeListener implements ListView.MultiChoiceModeL
         actionMode.setTitle(actionModeTitle);
 
         // Set background color on selected item.
-        if (listView.isItemChecked(position)) {
-            listView.getChildAt(position).setBackgroundColor(Color.LTGRAY);
-        } else {
-            listView.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
+        // Do a null-check here, sometimes we get a NPE.
+        View checkedItem = listView.getChildAt(position);
+        if (listView.isItemChecked(position) && checkedItem != null) {
+            checkedItem.setBackgroundColor(Color.LTGRAY);
+        } else if (checkedItem != null) {
+            checkedItem.setBackgroundColor(Color.TRANSPARENT);
         }
     }
 
@@ -58,7 +63,7 @@ public class RssFeedMultiChoiceModeListener implements ListView.MultiChoiceModeL
             case R.id.action_delete:
                 // Get a list of selected item ids.
                 long[] selectedFeedIds = listView.getCheckedItemIds();
-                ContentResolver cr = activity.getContentResolver();
+                ContentResolver cr = activity.get().getContentResolver();
 
                 // Delete all selected items.
                 for (long selectedFeedId : selectedFeedIds) {
@@ -79,5 +84,9 @@ public class RssFeedMultiChoiceModeListener implements ListView.MultiChoiceModeL
     public void onDestroyActionMode(ActionMode actionMode) {
         listView.clearChoices();
         listView.requestLayout();
+
+        for (int i = 0; i < listView.getCount(); ++i) {
+            listView.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
+        }
     }
 }

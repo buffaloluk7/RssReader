@@ -1,5 +1,6 @@
 package cc.lukas.rssreader.fragments;
 
+import android.app.Activity;
 import android.app.ListFragment;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -9,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
+
+import java.lang.ref.WeakReference;
 
 import cc.lukas.rssreader.R;
 import cc.lukas.rssreader.RssItemContentProvider;
@@ -62,7 +65,7 @@ public class RssItemListFragment extends ListFragment {
                         new String[]{String.valueOf(feedId)},
                         null);
         // Set up the cursor adapter.
-        adapter = new RssItemCursorAdapter(getActivity(), cursor, 0);
+        adapter = new RssItemCursorAdapter(getActivity(), cursor, true);
     }
 
     @Override
@@ -74,7 +77,9 @@ public class RssItemListFragment extends ListFragment {
         ListView listView = (ListView) view.findViewById(android.R.id.list);
         listView.setAdapter(adapter);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        listView.setMultiChoiceModeListener(new RssItemMultiChoiceModeListener(getActivity(), listView, getResources()));
+        listView.setMultiChoiceModeListener(
+                new RssItemMultiChoiceModeListener(
+                        new WeakReference<Activity>(getActivity()), listView, getResources()));
 
         return view;
     }
