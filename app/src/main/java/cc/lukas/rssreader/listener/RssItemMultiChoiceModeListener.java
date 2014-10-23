@@ -102,7 +102,10 @@ public class RssItemMultiChoiceModeListener implements ListView.MultiChoiceModeL
         listView.requestLayout();
 
         for (int i = 0; i < listView.getCount(); ++i) {
-            listView.getChildAt(i).setBackgroundColor(Color.TRANSPARENT);
+            View item = listView.getChildAt(i);
+            if (item != null) {
+                item.setBackgroundColor(Color.TRANSPARENT);
+            }
         }
     }
 }
